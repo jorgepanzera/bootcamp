@@ -1,0 +1,20 @@
+{
+  "name": "node-npm-intro",
+  "version": "1.0.0",
+  "description": "",
+  "main": "basic_server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cowsay": "^1.4.0",
+    "express": "^4.18.0",
+    "fs": "*",
+    "ip": "^1.1.5",    
+    "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21",
+    "mongodb": "^4.5.0"
+  }
+}
