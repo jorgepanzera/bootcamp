@@ -58,7 +58,35 @@ app.get('/query/all', function (req, res) {
 
 // GET method route
 // Query by hostname
-// ...
+app.get('/query', function (req, res) {
+    // Me fijo si existe parametro
+    let host = req.query.host;
+    if (host == undefined) {
+        // 400 Bad Request
+        res.status(400).send("Parametro host no recibido.");
+    } else {
+        MongoClient.connect(url,function(err,db) {
+            if (err) throw err;
+            var dbo = db.db("my-test-db");
+            var query = { host : host };
+            dbo.collection("calls").find(query).toArray(function(err,result) {
+                if (err) throw err;
+                console.log(result.length);
+                var cant = result.length;
+                if (cant > 0) {
+                    console.log(result);
+                    // 200 OK
+                    res.status(200).send(result);
+                    db.close();                         
+                } else {
+                    // 200 OK
+                    res.status(200).send("No hay datos con el parametro recibido");
+                    db.close();   
+                    };
+            }); // toArray
+        }); // connect
+    }; // else
+}); // get
 
 /* PUT method. Modifying the message based on host. 
 If not found, create a new document in the database. (201 Created)
