@@ -36,14 +36,16 @@ const url = `mongodb://localhost:27017/`;
 app.get('/query/all', function (req, res) {
     MongoClient.connect(url,function(err,db) {
         if (err) throw err;
-        var dbo = db.("my-test-db");
-        var query = { };
+        var dbo = db.db("my-test-db");
+        var query = {};
         dbo.collection("calls").find(query).toArray(function(err,result) {
             if (err) throw err;
-            if (result.lenght > 0) {
+            console.log(result.length);
+            var cant = result.length;
+            if (cant > 0) {
                 console.log(result);
                 // 200 OK
-                res.status(200).send(res);
+                res.status(200).send(result);
                 db.close();                         
             } else {
                 // 200 OK
