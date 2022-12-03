@@ -27,13 +27,32 @@ Your implementation here
 */
 
 // // Connect to mongodb server
-// const MongoClient = require('mongodb').MongoClient;
+const MongoClient = require('mongodb').MongoClient;
 // /* Your url connection to mongodb container */
-// const url = ...;
+const url = `mongodb://localhost:27017/`;
 
 // GET method route
 // Retrieve all documents in collection
-// ...
+app.get('/query/all', function (req, res) {
+    MongoClient.connect(url,function(err,db) {
+        if (err) throw err;
+        var dbo = db.("my-test-db");
+        var query = { };
+        dbo.collection("calls").find(query).toArray(function(err,result) {
+            if (err) throw err;
+            if (result.lenght > 0) {
+                console.log(result);
+                // 200 OK
+                res.status(200).send(res);
+                db.close();                         
+            } else {
+                // 200 OK
+                res.status(200).send("No hay datos en la coleccion");
+                db.close();   
+                };
+        }); // toArray
+    }); // connect
+}); // get
 
 // GET method route
 // Query by hostname
