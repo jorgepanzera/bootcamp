@@ -71,7 +71,7 @@ app.get('/query/all', function (req, res) {
                 db.close();                         
             } else {
                 // 200 OK
-                res.status(200).send("No hay datos en la coleccion");
+                res.status(204).send("No data found in collection");
                 db.close();   
                 };
         }); // toArray
@@ -85,7 +85,7 @@ app.get('/query', function (req, res) {
     let host = req.query.host;
     if (host == undefined) {
         // 400 Bad Request
-        res.status(400).send("Parametro host no recibido.");
+        res.status(400).send("Missing parameter :host");
     } else {
         MongoClient.connect(url,function(err,db) {
             if (err) throw err;
@@ -102,7 +102,7 @@ app.get('/query', function (req, res) {
                     db.close();                         
                 } else {
                     // 200 OK
-                    res.status(200).send("No hay datos con el parametro recibido");
+                    res.status(200).send("No data found with received parameter");
                     db.close();   
                     };
             }); // toArray
@@ -114,11 +114,11 @@ app.get('/query', function (req, res) {
 If not found, create a new document in the database. (201 Created)
 If found, message, date and offset is modified (200 OK) */
 app.put('/:host', function (req, res) {
-    let host = req.params.host;
-    if (host == undefined) {     // Me fijo si existe parametro
+    if (req == undefined) {     // Me fijo si existe parametro
         // 400 Bad Request
-        res.status(400).send("Parametro host no recibido.");
+        res.status(400).send("Missing parameter :host");
     } else {
+        let host = req.params.host;
         MongoClient.connect(url,function(err,db) {
             if (err) throw err;
             var dbo = db.db("my-test-db");
@@ -148,7 +148,7 @@ app.put('/:host', function (req, res) {
                         console.log(myobj);
                         console.log(`Document inserted in database.`);
                         // 201 OK
-                        res.status(201).send("No hay datos con el parametro recibido, se inserto nuevo mensaje");
+                        res.status(201).send("No data for parameter :host, new message inserted in database");
                         db.close();   
                     }); // insertOne
                 };// else cant > 0
@@ -164,7 +164,7 @@ app.delete('/:host', function (req, res) {
     let host = req.params.host;
     if (host == undefined) {     // Me fijo si existe parametro
         // 400 Bad Request
-        res.status(400).send("Parametro host no recibido.");
+        res.status(400).send("Missing parameter :host");
     } else {
         MongoClient.connect(url, function(err,db) {
             if (err) throw err;
