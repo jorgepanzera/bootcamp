@@ -157,10 +157,36 @@ app.put('/:host', function (req, res) {
     }; // else host undefinded
 }); // put
 
-/* DELETE method. Modifying the message based on hostname. 
+/* DELETE method. Deleting the messages based on hostname. 
 If not found, do nothing. (204 No Content)
 If found, document deleted (200 OK) */
-// ...
+app.delete('/:host', function (req, res) {
+    let host = req.params.host;
+    if (host == undefined) {     // Me fijo si existe parametro
+        // 400 Bad Request
+        res.status(400).send("Parametro host no recibido.");
+    } else {
+        MongoClient.connect(url, function(err,db) {
+            if (err) throw err;
+            var dbo = db.db("my-test-db");
+            var query = { host : host };
+            dbo.collection("calls").deleteMany(query , function(err, res_del) {
+                if(err) throw err;
+                var cant = res_del.deletedCount;
+                console.log(cant);
+                if (cant > 0) {
+                    // 200 OK	
+                    res.status(200).send(cant + " Record(s) deleted successfully");
+                    db.close();   
+                } else {
+                    // 204 Not Found
+                    res.status(204).send("No records found");
+                    db.close();  
+                }; // else cant > 0
+            }); // deleteMany
+        }); // connect
+    }; // else host undefinded
+}); // delete
 
 app.listen(port, hostname);
 console.log(`Running on http://${hostname}:${port}`);
