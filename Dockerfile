@@ -18,5 +18,4 @@ COPY . .
 # Bind your app to port 8080
 EXPOSE 8080
 
-# CMD [ "node", "server.js" ]
-CMD [ "node", "server_solution.js" ]
+CMD [ "node", "server.js" ]

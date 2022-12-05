@@ -51,7 +51,8 @@ Your implementation here
 // // Connect to mongodb server
 const MongoClient = require('mongodb').MongoClient;
 // /* Your url connection to mongodb container */
-const url = `mongodb://localhost:27017/`;
+//const url = `mongodb://localhost:27017/`;
+const url = `mongodb://0.0.0.0:27017/`;
 
 // GET method route
 // Retrieve all documents in collection
