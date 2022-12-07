@@ -53,6 +53,7 @@ const MongoClient = require('mongodb').MongoClient;
 // /* Your url connection to mongodb container */
 //const url = `mongodb://localhost:27017/`;
 const url = `mongodb://0.0.0.0:27017/`;
+//const url = `mongodb://db:27017/`;
 
 // GET method route
 // Retrieve all documents in collection
@@ -120,21 +121,27 @@ app.put('/:host', function (req, res) {
         res.status(400).send("Missing parameter :host");
     } else {
         let host = req.params.host;
-        MongoClient.connect(url, function(err,db) {
+        MongoClient.connect(url,function(err,db) {
             if (err) throw err;
             var dbo = db.db("my-test-db");
             var query = { host : host };
-            message = "Mensaje updateado por PUT (found host)";            
-            const updateDoc = { $set: { message: message, date: date, offset: offset } };
-            console.log(updateDoc);
-            dbo.collection("calls").updateMany(query , updateDoc, function(err, res_upd) {
-                if(err) throw err;
-                var cant = res_upd.modifiedCount;
-                console.log(cant);
+            dbo.collection("calls").find(query).toArray(function(err,result) {
+                if (err) throw err;
+                console.log(result.length);
+                var cant = result.length;
                 if (cant > 0) {
-                    // 200 OK	
-                    res.status(200).send(cant + " Record(s) updated successfully");
-                    db.close();   
+                    // HAY QUE HACER UPDATE
+                    message = "Mensaje updateado por PUT (found host)";
+                    // Armar un mensaje con los campos para updatear
+                    const updateDoc = { $set: { message: message, date: date, offset: offset } };
+                    console.log(updateDoc);
+                    dbo.collection("calls").updateMany(query , updateDoc, function(err, res_upd) {
+                        if(err) throw err;
+                        //console.log(res_upd.modifiedCount + " Record(s) updated successfully");
+                        // 200 OK	
+                        res.status(200).send(res_upd.modifiedCount + " Record(s) updated successfully");
+                        db.close();   
+                    }); // updateMany
                 } else {
                     message = "Mensaje insertado por PUT (not found)";
                     var myobj = { message: message, scope: scriptName, host: hostName, date: date , location: timezone, offset: offset};
@@ -144,10 +151,10 @@ app.put('/:host', function (req, res) {
                         console.log(`Document inserted in database.`);
                         // 201 OK
                         res.status(201).send("No data for parameter :host, new message inserted in database");
-                        db.close();
+                        db.close();   
                     }); // insertOne
-                }; // else cant > 0
-            }); // updateMany
+                };// else cant > 0
+            }); // toArray
         }); // connect
     }; // else host undefinded
 }); // put
